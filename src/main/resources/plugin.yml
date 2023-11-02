@@ -1,0 +1,8 @@
+name: mythinizen
+version: '${project.version}'
+main: aduvip.mythinizen.Mythinizen
+api-version: 1.20
+commands:
+  tt:
+    description: tt
+    usage: /tt
