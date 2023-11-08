@@ -1,11 +1,9 @@
 package aduvip.mythinizen.mythicmobs.mechanics;
 
 import com.denizenscript.denizen.objects.EntityTag;
-import com.denizenscript.denizen.utilities.Settings;
 import com.denizenscript.denizen.utilities.implementation.BukkitScriptEntryData;
 import com.denizenscript.denizencore.scripts.ScriptBuilder;
 import com.denizenscript.denizencore.scripts.ScriptEntry;
-import com.denizenscript.denizencore.scripts.ScriptEntryData;
 import com.denizenscript.denizencore.scripts.queues.core.InstantQueue;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.config.MythicLineConfig;
@@ -32,12 +30,12 @@ public class denizen implements ITargetedEntitySkill {
     @Override
     public SkillResult castAtEntity(SkillMetadata data, AbstractEntity target) {
         Entity caster = BukkitAdapter.adapt(data.getCaster().getEntity());
-        List<Object> entries = new ArrayList();
+        List<Object> entries = new ArrayList<>();
         String parsed_args = this.args.get(data, target);
         String entry = "%s %s".formatted(this.command.get(),parsed_args);
         entries.add(entry);
         InstantQueue queue = new InstantQueue("Mythinizen");
-        List<ScriptEntry> scriptEntries = ScriptBuilder.buildScriptEntries(entries, null, (ScriptEntryData)new BukkitScriptEntryData(new EntityTag(caster)));
+        List<ScriptEntry> scriptEntries = ScriptBuilder.buildScriptEntries(entries, null, new BukkitScriptEntryData(new EntityTag(caster)));
         queue.addEntries(scriptEntries);
         queue.start();
         return SkillResult.SUCCESS;

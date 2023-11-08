@@ -62,13 +62,13 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>nexus</id>
-            <name>Lumine Releases</name>
-            <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>citizens-repo</id>
             <url>https://maven.citizensnpcs.co/repo</url>
+        </repository>
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Public</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
 
     </repositories>
@@ -93,6 +93,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ticxo.modelengine</groupId>
+            <artifactId>ModelEngine</artifactId>
+            <version>R4.0.3</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 </project>

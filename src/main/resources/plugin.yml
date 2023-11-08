@@ -1,8 +1,13 @@
-name: mythinizen
+name: Mythinizen
 version: '${project.version}'
 main: aduvip.mythinizen.Mythinizen
+description: Some Added APi for Mythicmobs,ModelEngine,Denizen
 api-version: 1.20
 commands:
   tt:
     description: tt
     usage: /tt
+softdepend:
+  - MythicMobs
+  - ModelEngine
+  - Denizen
