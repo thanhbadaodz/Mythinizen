@@ -3,9 +3,11 @@ package aduvip.mythinizen;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import aduvip.mythinizen.denizen.command.ModelEnchantCommand;
+import aduvip.mythinizen.denizen.command.ModelTagCommand;
 import aduvip.mythinizen.denizen.tag.list.ModelEngineBaseProperties;
 import aduvip.mythinizen.mythicmobs.mechanics.customevent;
-import aduvip.mythinizen.command.tt;
+import aduvip.mythinizen.command.concac;
 import aduvip.mythinizen.mythicmobs.mechanics.denizen;
 import aduvip.mythinizen.mythicmobs.targets.Flagged;
 import aduvip.mythinizen.mythicmobs.targets.tess;
@@ -31,9 +33,11 @@ public class Mythinizen extends JavaPlugin implements Listener {
     public void onEnable() {
         log = this.getLogger();
         Bukkit.getPluginManager().registerEvents(this, this);
-        Objects.requireNonNull(getCommand("tt")).setExecutor(new tt(log));
+        Objects.requireNonNull(getCommand("tt")).setExecutor(new concac(log));
         //Command Register
         DenizenCore.commandRegistry.registerCommand(ModelEngineCommand.class);
+        DenizenCore.commandRegistry.registerCommand(ModelTagCommand.class);
+        DenizenCore.commandRegistry.registerCommand(ModelEnchantCommand.class);
         //Properties Register
         PropertyParser.registerProperty(ModelEngineProperties.class, EntityTag.class);
         PropertyParser.registerProperty(ModelEngineBaseProperties.class, ListTag.class);

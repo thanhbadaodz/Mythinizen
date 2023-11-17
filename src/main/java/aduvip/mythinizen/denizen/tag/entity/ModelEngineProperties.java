@@ -1,5 +1,6 @@
 package aduvip.mythinizen.denizen.tag.entity;
 
+import aduvip.mythinizen.Utils.Utils;
 import com.denizenscript.denizen.objects.EntityTag;
 import com.denizenscript.denizencore.objects.Mechanism;
 import com.denizenscript.denizencore.objects.ObjectTag;
@@ -7,9 +8,7 @@ import com.denizenscript.denizencore.objects.core.ElementTag;
 import com.denizenscript.denizencore.objects.core.ListTag;
 import com.denizenscript.denizencore.objects.properties.Property;
 import com.denizenscript.denizencore.objects.properties.PropertyParser;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.model.ActiveModel;
-import com.ticxo.modelengine.api.model.ModeledEntity;
+
 
 import java.util.Set;
 import java.util.UUID;
@@ -44,23 +43,9 @@ public class ModelEngineProperties implements Property {
 
 
     public static void register() {
-        PropertyParser.registerTag(ModelEngineProperties.class, ElementTag.class, "is_modeled", (attribute, object) -> new ElementTag(object.isModeled()), "is_modeled");
-        PropertyParser.registerTag(ModelEngineProperties.class, ListTag.class, "modeled_ids", (attribute, object) -> new ListTag(object.Modeled_IDs()), "modeled_ids");
+        PropertyParser.registerTag(ModelEngineProperties.class, ElementTag.class, "is_modeled", (attribute, object) -> new ElementTag(Utils.isModeled(object.entity)), "is_modeled");
+        PropertyParser.registerTag(ModelEngineProperties.class, ListTag.class, "modeled_ids", (attribute, object) -> new ListTag(Utils.Modeled_IDs(object.entity)), "modeled_ids");
     }
 
-    public boolean isModeled() {
-        return (ModelEngineAPI.getModeledEntity(this.entity.getBukkitEntity()) != null);
-    }
-
-    public ListTag Modeled_IDs() {
-        ListTag result = new ListTag();
-        ModeledEntity listActive = ModelEngineAPI.getModeledEntity(this.entity.getBukkitEntity());
-        if (listActive != null){
-            for (ActiveModel activeModel : listActive.getModels().values()) {
-                result.add(activeModel.getBlueprint().getName());
-            }
-        }
-        return result;
-    }
 
 }

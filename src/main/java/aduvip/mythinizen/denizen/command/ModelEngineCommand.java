@@ -1,5 +1,6 @@
 package aduvip.mythinizen.denizen.command;
 
+import aduvip.mythinizen.Utils.Utils;
 import com.denizenscript.denizen.objects.EntityTag;
 import com.denizenscript.denizen.utilities.Utilities;
 import com.denizenscript.denizencore.exceptions.InvalidArgumentsException;
@@ -14,13 +15,15 @@ import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.generator.blueprint.ModelBlueprint;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import org.bukkit.block.data.type.Comparator;
+import org.checkerframework.checker.guieffect.qual.UI;
 
 import java.util.List;
 
 public class ModelEngineCommand extends AbstractCommand {
     public ModelEngineCommand() {
         setName("modelengine");
-        setSyntax("modelengine [set/unset] [<model_id>] [<entity>|...] (scale:<#.#>) (see_by:<entity>|...)");
+        setSyntax("modelengine [set/unset] (<entity>) [<model_id>] (scale:<#.#>) (see_by:<entity>|...)");
         setRequiredArguments(2, 5);
     }
 
@@ -29,6 +32,7 @@ public class ModelEngineCommand extends AbstractCommand {
     }
     public void addCustomTabCompletions(AbstractCommand.TabCompletionsBuilder tab) {
         tab.add(ModelEngineAPI.getAPI().getModelRegistry().getKeys());
+        tab.add(Action.values());
     }
 
     public void parseArgs(ScriptEntry scriptEntry) throws InvalidArgumentsException {
@@ -39,14 +43,14 @@ public class ModelEngineCommand extends AbstractCommand {
                 scriptEntry.addObject("action", arg.asElement());
                 continue;
             }
+            if (!scriptEntry.hasObject("entity") && arg
+                    .matchesArgumentTypes(EntityTag.class)) {
+                scriptEntry.addObject("entity", arg.asType(EntityTag.class));
+                continue;
+            }
             ModelBlueprint blueprint = ModelEngineAPI.getBlueprint(arg.toString().toLowerCase());
             if (!scriptEntry.hasObject("model_id") && blueprint != null) {
                 scriptEntry.addObject("model_id", arg.asElement());
-                continue;
-            }
-            if (!scriptEntry.hasObject("entities") && arg
-                    .matchesArgumentList(EntityTag.class)) {
-                scriptEntry.addObject("entities", ((ListTag) arg.asType(ListTag.class)).filter(EntityTag.class, scriptEntry));
                 continue;
             }
             if (!scriptEntry.hasObject("scale") && arg.matchesFloat()) {
@@ -62,10 +66,10 @@ public class ModelEngineCommand extends AbstractCommand {
             Debug.log(arg.toString());
         }
         if (scriptEntry.hasObject("action")) {
+            if (!scriptEntry.hasObject("entity"))
+                throw new InvalidArgumentsException("Must specify a valid EntityTag");
             if (!scriptEntry.hasObject("model_id"))
                 throw new InvalidArgumentsException("Must specify a valid Model Engine Model_ID");
-            if (!scriptEntry.hasObject("entities"))
-                throw new InvalidArgumentsException("Must specify a valid EntityTag");
             if (!scriptEntry.hasObject("scale"))
                 scriptEntry.addObject("scale", new ElementTag("1.0"));
             if (!scriptEntry.hasObject("see_by"))
@@ -75,36 +79,18 @@ public class ModelEngineCommand extends AbstractCommand {
 
     public void execute(ScriptEntry scriptEntry) {
         ElementTag action = scriptEntry.getElement("action");
-        ElementTag model_id = scriptEntry.getObjectTag("model_id");
-        List<EntityTag> entities = (List<EntityTag>) scriptEntry.getObject("entities");
-        ElementTag scale = scriptEntry.getElement("scale");
+        EntityTag entity = (EntityTag) scriptEntry.getObject("entity");
         List<EntityTag> see_by = (List<EntityTag>) scriptEntry.getObject("see_by");
-        switch (action.asLowerString()) {
-            case "set":
-                for (EntityTag entity : entities) {
-                    BukkitEntity base = new BukkitEntity(entity.getBukkitEntity());
-                    ModeledEntity modeledEntity = ModelEngineAPI.createModeledEntity(base);
-                    ActiveModel activeModel = ModelEngineAPI.createActiveModel(model_id.toString());
-                    activeModel.setScale(Double.parseDouble(scale.toString()));
-                    activeModel.setHitboxScale(Double.parseDouble(scale.toString()));
-                    modeledEntity.setSaved(true);
-                    modeledEntity.setBaseEntityVisible(false);
-                    modeledEntity.addModel(activeModel, true);
-
-                }
-                break;
-            case "unset":
-                for (EntityTag entity : entities) {
-                    ModeledEntity modeledEntity = ModelEngineAPI.getModeledEntity(entity.getUUID());
-                    for (ActiveModel activeModel : modeledEntity.getModels().values()) {
-                        modeledEntity.removeModel(activeModel.getBlueprint().getName()).ifPresent(ActiveModel::destroy);
-                    }
-                }
+        if (action.asLowerString().equalsIgnoreCase("set")){
+            String model_id = scriptEntry.getObjectTag("model_id").toString();
+            double scale = Double.parseDouble(scriptEntry.getElement("scale").toString());
+            if (Utils.isModeled(entity)) {
+                Utils.Unset_Model(ModelEngineAPI.getModeledEntity(entity.getBukkitEntity()));
+            }
+            Utils.Set_Model(entity,model_id,scale);
+        }else if(action.asLowerString().equalsIgnoreCase("unset")){
+            Utils.Unset_Model(ModelEngineAPI.getModeledEntity(entity.getBukkitEntity()));
         }
-        Debug.log(action.toString());
-        Debug.log(model_id.toString());
-        Debug.log(entities.toString());
-        Debug.log(scale.toString());
         Debug.log(see_by.toString());
     }
 }
