@@ -15,7 +15,6 @@ import com.ticxo.modelengine.api.entity.BukkitEntity;
 import com.ticxo.modelengine.api.generator.blueprint.ModelBlueprint;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import org.bukkit.block.data.type.Comparator;
 import org.checkerframework.checker.guieffect.qual.UI;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public class ModelEngineCommand extends AbstractCommand {
             arg.reportUnhandled();
             Debug.log(arg.toString());
         }
-        if (scriptEntry.hasObject("action")) {
+        if (scriptEntry.getObjectTag("action")) {
             if (!scriptEntry.hasObject("entity"))
                 throw new InvalidArgumentsException("Must specify a valid EntityTag");
             if (!scriptEntry.hasObject("model_id"))

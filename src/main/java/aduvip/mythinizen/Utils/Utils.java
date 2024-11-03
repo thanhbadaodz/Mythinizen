@@ -72,4 +72,7 @@ public class Utils {
             }
         }
     }
+    public static String intForm(int i, int length) {
+        return String.format("%" + length + "d", i);
+    }
 }
